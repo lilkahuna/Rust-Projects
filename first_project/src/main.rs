@@ -38,4 +38,3 @@ fn add(x: i32, y: i32) -> i32
     // This is an expression, so it will automatically return it's value. Expressions evaluate to a value.
     x + y
 }
-
