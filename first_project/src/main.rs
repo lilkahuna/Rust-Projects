@@ -61,7 +61,7 @@ fn main()
     let new_user: User = User::new(String::from("Sigma"), String::from("Rizz"), 13); // This is like a constructor
     println!("Username: {}, Password: {}. Age: {}", new_user.username, new_user.password, new_user.age);
 
-    // Using method syntax
+    // Using method syntax on User instance
     if user.is_of_age() {
         println!("User is of age");
     }
