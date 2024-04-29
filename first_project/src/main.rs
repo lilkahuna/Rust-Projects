@@ -1,9 +1,15 @@
-use std::{any::Any, borrow::Borrow, io};
+use std::io;
 
 struct User {
     username: String,
     password: String,
     age: u8
+}
+
+enum IPAddr {
+    // tuple struct definition
+    V4(String),
+    V6(String)
 }
 
 impl User {
@@ -25,7 +31,6 @@ impl User {
         }
     } 
 }
-
 
 
 /** IMPORTANT INFORMATION:
