@@ -6,10 +6,11 @@ struct User {
     age: u8
 }
 
-enum IPAddr {
-    // tuple struct definition
-    V4(String),
-    V6(String)
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter
 }
 
 impl User {
@@ -46,7 +47,7 @@ fn main()
     // By default, rust variables are immutable, so we must use mut to make it mutable.
     let mut guess: String = String::new(); // Creates a new empty string. :: means that new() is a function of the String type
     // Instance of User struct
-    let user = User {
+    let user: User = User {
         username: String::from("johndoe1"),
         password: String::from("12345"),
         age: 18
@@ -71,6 +72,11 @@ fn main()
         println!("User is of age");
     }
 
+    // Using match statement
+    let penny: Coin = Coin::Penny;
+    let value: u8 = value_of_coin(penny);
+    println!("value of coin is {}", value);
+    
 }
 
 // Borrowing the array of i32 values
@@ -81,7 +87,7 @@ fn loop_array(arr: &[i32]) -> i32 {
         println!("Value of {element}; index of {counter}");
         counter += 1
     }
-    // Auto return
+    // Expression returns automatically
     counter
 }
 
@@ -89,5 +95,14 @@ fn loop_array(arr: &[i32]) -> i32 {
 fn add(x: i32, y: i32) -> i32 {
     // This is an expression, so it will automatically return it's value. Expressions evaluate to a value.
     x + y
+}
+
+fn value_of_coin(coin: Coin) -> u8 {
+    match coin {
+        Coin::Penny => 1,
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter => 25
+    }
 }
 
