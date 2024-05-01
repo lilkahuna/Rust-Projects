@@ -1,36 +1,9 @@
 use std::io;
 
-struct User {
-    username: String,
-    password: String,
-    age: u8
-}
-
-enum IPAddr {
-    // tuple struct definition
-    V4(String),
-    V6(String)
-}
-
-impl User {
-    fn new(username: String, password: String, age: u8) -> Self {
-        Self {
-            username: username,
-            password: password,
-            age: age
-        }
-    }
-}
-
-impl User {
-    fn is_of_age(&self) -> bool {
-        if self.age >= 18 {
-            true
-        } else {
-            false
-        }
-    } 
-}
+// Definition of the example_mod mod(looks for a file named after the module)
+mod example_mod;
+// Exports it for public use
+pub use crate::example_mod::hosting;
 
 
 /** IMPORTANT INFORMATION:
@@ -40,37 +13,29 @@ impl User {
  * a bit stores 0 or 1
  * i32 is the default integer type of rust
  * associated functions belong to the type, not the instance
+ * Structs, enums, pattern matching, and impl blocks
+ * Vectors are like lists
  */
 fn main() 
 {
     // By default, rust variables are immutable, so we must use mut to make it mutable.
     let mut guess: String = String::new(); // Creates a new empty string. :: means that new() is a function of the String type
-    // Instance of User struct
-    let user = User {
-        username: String::from("johndoe1"),
-        password: String::from("12345"),
-        age: 18
-    };
-    println!("{}", user.username);
-
+    
     println!("Type in something");
     // & is used to reference the variable "guess"
     io::stdin().read_line(&mut guess).expect("Error occurred in reading input"); // Expect runs if the result enum gives an error varient
     
-    println!("Input: {guess}");
+    println!("You typed {guess}");
+    
     // Slice of a string
     let slice: &str = &guess[0..2];
-    println!("{}", slice);
+    println!("{slice}");
 
-    // Using associated function
-    let new_user: User = User::new(String::from("Sigma"), String::from("Rizz"), 13); // This is like a constructor
-    println!("Username: {}, Password: {}, Age: {}", new_user.username, new_user.password, new_user.age);
-
-    // Using method syntax on User instance
-    if user.is_of_age() {
-        println!("User is of age");
+    let mut v: Vec<i32> = vec![200, 100, 5000];
+    
+    for i in &v {
+        println!("Value: {i}");
     }
-
 }
 
 // Borrowing the array of i32 values
