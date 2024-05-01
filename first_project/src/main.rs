@@ -46,7 +46,7 @@ fn loop_array(arr: &[i32]) -> i32 {
         println!("Value of {element}; index of {counter}");
         counter += 1
     }
-    // Auto return
+    // Expression returns automatically
     counter
 }
 
