@@ -1,58 +1,41 @@
-use std::io;
+use std::fs::File;
+use std::io::{Read, Result, Write};
 
 // Definition of the example_mod mod(looks for a file named after the module)
 mod example_mod;
-// Exports it for public use
+// Re-exports it for public use
 pub use crate::example_mod::hosting;
 
-
 /** IMPORTANT INFORMATION:
- * unsigned means only positive(0-255), while signed means positive or negative(-128-127)
- * a signed integer uses the first bit to store sign information. 0 for positive and vice versa.
+ * Unsigned means only positive(0-255), while signed means positive or negative(-128-127)
+ * A signed integer uses the first bit to store sign information. 0 for positive and vice versa.
  * 8 bits is a byte
- * a bit stores 0 or 1
+ * A bit stores 0 or 1
  * i32 is the default integer type of rust
- * associated functions belong to the type, not the instance
- * Structs, enums, pattern matching, and impl blocks
+ * Associated functions belong to the type, not the instance
+ * Structs, enums, pattern matching, traits ,and impl blocks
  * Vectors are like lists
+ * Rust will panic in order to protect from buffer overread
+ * :? is a formatting directive
+ * traits are shared behaviors
+ * ? unwraps the Result enum and handles it
  */
-fn main() 
-{
-    // By default, rust variables are immutable, so we must use mut to make it mutable.
-    let mut guess: String = String::new(); // Creates a new empty string. :: means that new() is a function of the String type
-    
-    println!("Type in something");
-    // & is used to reference the variable "guess"
-    io::stdin().read_line(&mut guess).expect("Error occurred in reading input"); // Expect runs if the result enum gives an error varient
-    
-    println!("You typed {guess}");
-    
-    // Slice of a string
-    let slice: &str = &guess[0..2];
-    println!("{slice}");
+fn main() -> Result<()> {    
+    println!("Reading image...");
 
-    let mut v: Vec<i32> = vec![200, 100, 5000];
+    let mut file = File::open("Image.png")?;
     
-    for i in &v {
-        println!("Value: {i}");
+    // Read the contents of the file into a buffer
+    let mut buffer: Vec<u8> = Vec::new();
+    file.read_to_end(&mut buffer)?;
+    
+    // Print out the bytes
+    for byte in &buffer {
+        print!("{} ", byte);
     }
+
+    // Sucessful run
+    Ok(())
 }
 
-// Borrowing the array of i32 values
-fn loop_array(arr: &[i32]) -> i32 {
-    let mut counter: i32 = 0;
-    for element in arr 
-    {
-        println!("Value of {element}; index of {counter}");
-        counter += 1
-    }
-    // Expression returns automatically
-    counter
-}
-
-// return type after ->
-fn add(x: i32, y: i32) -> i32 {
-    // This is an expression, so it will automatically return it's value. Expressions evaluate to a value.
-    x + y
-}
 
