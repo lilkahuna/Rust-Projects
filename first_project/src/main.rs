@@ -1,10 +1,4 @@
-use std::fs::File;
-use std::io::{Read, Result, Write};
-
-// Definition of the example_mod mod(looks for a file named after the module)
-mod example_mod;
-// Re-exports it for public use
-pub use crate::example_mod::hosting;
+use std::env;
 
 /** IMPORTANT INFORMATION:
  * Unsigned means only positive(0-255), while signed means positive or negative(-128-127)
@@ -20,22 +14,9 @@ pub use crate::example_mod::hosting;
  * traits are shared behaviors
  * ? unwraps the Result enum and handles it
  */
-fn main() -> Result<()> {    
-    println!("Reading image...");
+fn main() {   
+    println!("Rizz");
 
-    let mut file = File::open("Image.png")?;
-    
-    // Read the contents of the file into a buffer
-    let mut buffer: Vec<u8> = Vec::new();
-    file.read_to_end(&mut buffer)?;
-    
-    // Print out the bytes
-    for byte in &buffer {
-        print!("{} ", byte);
-    }
-
-    // Sucessful run
-    Ok(())
 }
 
 
