@@ -5,19 +5,20 @@ enum Command {
     Replace(String, String, String)
 }
 
-struct Error<'a> {
-    msg: &'a str
+struct Error {
+    // Must give the string slice a static lifetime
+    msg: &'static str
 }
 
-impl std::fmt::Debug for Error<'_> {
+impl std::fmt::Debug for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Error Occured: {}", self.msg)
+        write!(f, "{}", self.msg)
     }
 }
 
 impl Command {
 
-    fn parse_command_args(args: &[String]) -> Result<Command, Error<'static>> {
+    fn parse_command_args(args: &[String]) -> Result<Command, Error> {
         if args.len() < 4 {
             Err(Error { msg: "Not enough arguments given" } )
         } else {
@@ -65,8 +66,7 @@ impl Command {
 
                 fs::write(file, new_content).expect("Couldn't write to file");
 
-                println!("Sucessfully replaced {} with {}", to_replace, with_replace)
-                
+                println!("Sucessfully replaced {} with {}", to_replace, with_replace);
             }
         };
     }
@@ -87,7 +87,7 @@ impl Command {
  * traits are shared behaviors
  * ? unwraps the Result enum and handles it
  */
-fn main() -> Result<(), Error<'static>>{   
+fn main() -> Result<(), Error>{
     let args: Vec<String> = env::args().collect();
 
     let command = Command::parse_command_args(&args)?;
