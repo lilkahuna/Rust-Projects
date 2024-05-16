@@ -1,21 +1,29 @@
 pub mod cmd {
-    use std::{fs::{self, File}, io::Read, os::windows::fs::MetadataExt};
+    use std::fmt;
+    use std::{fs::{self, File}, io::Read};
 
-    #[derive(Debug, PartialEq)]
+    #[derive(PartialEq, Debug)]
     pub enum Command {
         Search(String, String),
         Replace(String, String, String),
         Info(String)
     }
     
-    pub struct Error {
-        msg: String
+    #[derive(PartialEq, Debug)]
+    pub enum ErrorType {
+        InvalidArgument,
+        NotEnoughArguments,
     }
-    
-    impl std::fmt::Debug for Error {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            // Writes to a buffer with a custom error message
-            write!(f, "{}", self.msg)
+
+    #[derive(PartialEq, Debug)]
+    pub struct Error {
+        pub msg: String,
+        pub error: ErrorType,
+    }
+
+    impl fmt::Display for Error {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{:?}: {}", self.error, self.msg)
         }
     }
     
@@ -23,14 +31,14 @@ pub mod cmd {
     
         pub fn parse_command_args(args: &[String]) -> Result<Command, Error> {
             if args.len() < 3 {
-                Err(Error { msg: "Not enough arguments given".to_string() } )
+                Err(Error { msg: String::from("Not enough arguments given"), error: ErrorType::NotEnoughArguments } )
             } else {
                 let command = &args[1];
                 match command.as_str() {
                     "search" => Ok(Command::Search(args[2].clone(), args[3].clone())),
                     "replace" => Ok(Command::Replace(args[2].clone(), args[3].clone() , args[4].clone())),
                     "info" => Ok(Command::Info(args[2].clone())),
-                    _ => Err(Error { msg: format!("{command} is not a command.") } )
+                    _ => Err(Error { msg: format!("{command} is not a command."), error: ErrorType::InvalidArgument } )
                 }
             } 
         }
@@ -76,7 +84,7 @@ pub mod cmd {
                 },
                 Command::Info(file) => {
                     let mut opened_file = File::open(file).expect("Can't open file");
-                    let file_size = opened_file.metadata().expect("Can't get metadata").file_size();
+                    let file_size = opened_file.metadata().expect("Can't get metadata").len();
                     
                     let mut content = String::new();
                     opened_file.read_to_string(&mut content).expect("Can't read file");
