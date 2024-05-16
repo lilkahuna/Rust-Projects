@@ -6,12 +6,12 @@ enum Command {
 }
 
 struct Error {
-    // Must give the string slice a static lifetime
-    msg: &'static str
+    msg: String
 }
 
 impl std::fmt::Debug for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // Writes to a buffer with a custom error message
         write!(f, "{}", self.msg)
     }
 }
@@ -20,12 +20,14 @@ impl Command {
 
     fn parse_command_args(args: &[String]) -> Result<Command, Error> {
         if args.len() < 4 {
-            Err(Error { msg: "Not enough arguments given" } )
+            Err(Error { msg: "Not enough arguments given".to_string() } )
         } else {
-            match args[1].as_str() {
+            let command = &args[1];
+            match command.as_str() {
                 "search" => Ok(Command::Search(args[2].clone(), args[3].clone())),
                 "replace" => Ok(Command::Replace(args[2].clone(), args[3].clone() , args[4].clone())),
-                _ => panic!("Not a command, use search or replace")
+                _ => Err(Error { msg: format!("{command} is not a command.") } )
+                }
             } 
         }
     }
@@ -86,12 +88,13 @@ impl Command {
  * :? is a formatting directive
  * traits are shared behaviors
  * ? unwraps the Result enum and handles it
+ * Iterators create elements on the fly(lazy loading), making them more memory efficient
  */
 fn main() -> Result<(), Error>{
     let args: Vec<String> = env::args().collect();
 
     let command = Command::parse_command_args(&args)?;
     command.execute();
-
+    
     Ok(())
 }
