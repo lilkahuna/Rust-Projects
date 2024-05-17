@@ -1,4 +1,4 @@
-use first_project::cmd::{Command, ErrorType};
+use fsx::cmd::{Command, ErrorType};
 
 #[test]
 fn test_parser_for_info() {

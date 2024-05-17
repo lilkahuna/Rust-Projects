@@ -1,5 +1,5 @@
 use std::env;
-use first_project::cmd::{Command, Error};
+use fsx::cmd::{Command, Error};
 
 /* IMPORTANT INFORMATION:
  * Unsigned means only positive(0-255), while signed means positive or negative(-128-127)
