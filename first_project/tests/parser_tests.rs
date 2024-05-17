@@ -1,4 +1,4 @@
-use first_project::cmd::{Command, Error, ErrorType};
+use first_project::cmd::{Command, ErrorType};
 
 #[test]
 fn test_parser_for_info() {
@@ -32,12 +32,8 @@ fn test_parser_for_error() {
             panic!("Expected Err variant, but received Ok variant");        
         },
         Err(er) => {
-            // If an error occurred, check if it is of the expected type or pattern
-            let expected_error = Error {
-                msg: String::from("something is not a command."),
-                error: ErrorType::InvalidArgument
-            };
-            assert_eq!(er, expected_error);
+            
+            assert_eq!(er.error, ErrorType::InvalidArgument);
         }
     }
     

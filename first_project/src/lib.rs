@@ -1,5 +1,5 @@
 pub mod cmd {
-    use std::fmt;
+    use std::fmt::{self, Debug};
     use std::{fs::{self, File}, io::Read};
 
     #[derive(PartialEq, Debug)]
@@ -15,20 +15,32 @@ pub mod cmd {
         NotEnoughArguments,
     }
 
-    #[derive(PartialEq, Debug)]
+    #[derive(PartialEq)]
     pub struct Error {
         pub msg: String,
         pub error: ErrorType,
     }
 
-    impl fmt::Display for Error {
+    impl Debug for Error {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            write!(f, "{:?}: {}", self.error, self.msg)
+            write!(f, "{:?} -> {}", self.error, self.msg)
         }
     }
     
     impl Command {
-    
+        /**
+            # Example
+            Creates a varient of the Command type with all valid arguments based on the subcommand in the ```args``` vector passed.
+
+            Returns a Result containing ```Command``` or ```Error```.
+            ```
+            use std::env;
+            use first_project::cmd::{Command, Error};
+
+            let args: Vec<String> = env::args().collect();
+            let command: Result<Command, Error> = Command::parse_command_args(&args);
+            ```
+         */
         pub fn parse_command_args(args: &[String]) -> Result<Command, Error> {
             if args.len() < 3 {
                 Err(Error { msg: String::from("Not enough arguments given"), error: ErrorType::NotEnoughArguments } )
@@ -43,7 +55,12 @@ pub mod cmd {
             } 
         }
         
-    
+        /**
+            # Example
+            ```
+            
+            ```
+         */
         pub fn execute(&self) {
             match self {
                 Command::Search(query, file) => {
