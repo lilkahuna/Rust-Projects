@@ -1,7 +1,10 @@
-pub mod cmd {
+pub mod parser;
+pub mod cmd;
+
+pub mod test {
     use std::fmt::{self, Debug};
     use std::{fs::{self, File}, io::Read};
-
+    
     #[derive(PartialEq, Debug)]
     pub enum Command {
         Search(String, String),
@@ -29,13 +32,15 @@ pub mod cmd {
     
     impl Command {
         /**
-            # Example
             Creates a varient of the Command type with all valid arguments based on the subcommand in the ```args``` vector passed.
 
             Returns a Result containing ```Command``` or ```Error```.
+
+            # Example
+            
             ```
             use std::env;
-            use first_project::cmd::{Command, Error};
+            use fsx::cmd::{Command, Error};
 
             let args: Vec<String> = env::args().collect();
             let command: Result<Command, Error> = Command::parse_command_args(&args);
@@ -56,65 +61,35 @@ pub mod cmd {
         }
         
         /**
+            Consumes the ```self``` value and executes functionality depending on the varient.
+
             # Example
             ```
-            
+            use std::env;
+            use fsx::cmd::{Command, Error};
+
+            let args: Vec<String> = env::args().collect();
+            let command: Result<Command, Error> = Command::parse_command_args(&args);
+            command.execute();
             ```
          */
         pub fn execute(&self) {
             match self {
                 Command::Search(query, file) => {
                     println!("Searching {} for '{}'...", file, query);
-                    let content: String = fs::read_to_string(file).expect("Couldn't read file");
-                    // Token every word
-                    let words: Vec<&str> = content.split_whitespace().collect();
-                    let mut counter: u8 = 0;
-            
-                    for word in words {
-                        if word == query {
-                            counter += 1;
-                        }
-                    }
+                    
     
                     println!("Found {} instances of '{}' in {}", counter, query, file);
                 },
                 Command::Replace(to_replace, with_replace,file) => {
                     println!("Replacing...");
     
-                    let content: String = fs::read_to_string(file).expect("Coudln't read file");
-                    let mut new_content = String::new();
-    
-                    for line in content.lines() {
-                        for word in line.split_whitespace() {
-                            if word == to_replace {
-                                new_content.push_str(format!("{with_replace} ").as_str());
-                            } else {
-                                new_content.push_str(format!("{word} ").as_str());
-                            }
-                        }
-                        new_content.push_str("\n");
-                    }
-    
-                    fs::write(file, new_content).expect("Couldn't write to file");
+                    
     
                     println!("Sucessfully replaced {} with {}", to_replace, with_replace);
                 },
                 Command::Info(file) => {
-                    let mut opened_file = File::open(file).expect("Can't open file");
-                    let file_size = opened_file.metadata().expect("Can't get metadata").len();
                     
-                    let mut content = String::new();
-                    opened_file.read_to_string(&mut content).expect("Can't read file");
-                    
-                    // Token every word
-                    let words: Vec<&str> = content.split_whitespace().collect();
-    
-                    let word_count = words.len();
-                    let mut character_count: usize = 0;
-    
-                    for word in words {
-                        character_count += word.len();
-                    }
                     
                     println!(
                     "

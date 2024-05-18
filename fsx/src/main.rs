@@ -1,5 +1,7 @@
-use std::env;
-use fsx::cmd::{Command, Error};
+use fsx::parser::{FsxArgs, Command};
+use fsx::cmd;
+use clap::Parser;
+
 
 /* IMPORTANT INFORMATION:
  * Unsigned means only positive(0-255), while signed means positive or negative(-128-127)
@@ -16,11 +18,16 @@ use fsx::cmd::{Command, Error};
  * ? unwraps the Result enum and handles it
  * Iterators create elements on the fly(lazy loading), making them more memory efficient
  */
-fn main() -> Result<(), Error>{
-    let args: Vec<String> = env::args().collect();
 
-    let command = Command::parse_command_args(&args)?;
-    command.execute();
+
+fn main() {
+    let args = FsxArgs::parse();
     
-    Ok(())
+    match args.command {
+        Command::Search(search_args) => {
+            let instances = cmd::search_file(&search_args.query, &search_args.file);
+            println!("{} instances of '{}' found in {}", instances, search_args.query, search_args.file);
+        }
+    }
+
 }
