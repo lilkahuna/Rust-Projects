@@ -1,7 +1,37 @@
+use std::fmt;
 use std::fs::{self, File};
 
-pub fn search_file(query: &String, file: &String) -> usize {
-    let content: String = fs::read_to_string(file).expect("Couldn't read file");
+#[derive(Debug)]
+pub enum ErrorType {
+    FileReadError,
+    FileWriteError,
+    FileOpenError,
+    FileDataError
+}
+
+#[derive(Debug)]
+pub struct CmdError {
+    pub msg: String,
+    pub error_type: ErrorType
+}
+
+impl CmdError {
+    fn new(msg: String, error: ErrorType) -> Self {
+        Self {
+            msg: msg,
+            error_type: error
+        }
+    }
+}
+
+impl fmt::Display for CmdError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{:?} -> {}", self.error_type, self.msg)
+    }
+}
+
+pub fn search_file(query: &String, file: &String) -> Result<usize, CmdError> {
+    let content = fs::read_to_string(file).map_err(|e| CmdError::new(e.to_string(), ErrorType::FileReadError))?;
 
     // Token every word
     let words: Vec<&str> = content.split_whitespace().collect();
@@ -12,11 +42,11 @@ pub fn search_file(query: &String, file: &String) -> usize {
             counter += 1;
         }
     }
-    counter
+    Ok(counter)
 }
 
-pub fn replace_in_file(to_replace: &String, with_replace: &String, file: &String) {
-    let content: String = fs::read_to_string(file).expect("Coudln't read file");
+pub fn replace_in_file(to_replace: &String, with_replace: &String, file: &String) -> Result<(), CmdError> {
+    let content: String = fs::read_to_string(file).map_err(|e| CmdError::new(e.to_string(), ErrorType::FileReadError))?;
     let mut new_content = String::new();
     
     for line in content.lines() {
@@ -30,32 +60,33 @@ pub fn replace_in_file(to_replace: &String, with_replace: &String, file: &String
         new_content.push_str("\n");
     }
     
-    fs::write(file, new_content).expect("Couldn't write to file");
+    fs::write(file, new_content).map_err(|e| CmdError::new(e.to_string(), ErrorType::FileWriteError))?;
+    Ok(())
 }
 
-fn get_file_size(file: &String) -> u64 {
-    let mut opened_file = File::open(file).expect("Couldn't open file");
-    let file_size = opened_file.metadata().expect("Couldn't get metadata").len();
+pub fn get_file_size(file: &String) -> Result<u64, CmdError> {
+    let opened_file = File::open(file).map_err(|e| CmdError::new(e.to_string(), ErrorType::FileOpenError))?;
+    let file_size = opened_file.metadata().map_err(|e| CmdError::new(e.to_string(), ErrorType::FileOpenError))?.len();
     
-    file_size
+    Ok(file_size)
 }
 
-pub fn get_word_count(file: &String) -> usize {
-    let content = fs::read_to_string(file).expect("Couldn't read file");
+pub fn get_word_count(file: &String) -> Result<usize, CmdError> {
+    let content = fs::read_to_string(file).map_err(|e| CmdError::new(e.to_string(), ErrorType::FileReadError))?;
     let mut word_count: usize = 0;
 
     for _word in content.split_whitespace() {
         word_count += 1;
     }
-    word_count
+    Ok(word_count)
 }
 
-pub fn get_char_count(file: &String) -> usize{
-    let content = fs::read_to_string(file).expect("Couldn't read file");
+pub fn get_char_count(file: &String) -> Result<usize, CmdError> {
+    let content = fs::read_to_string(file).map_err(|e| CmdError::new(e.to_string(), ErrorType::FileReadError))?;
     let mut char_count: usize = 0;
 
     for word in content.split_whitespace() {
         char_count += word.len();
     }
-    char_count
+    Ok(char_count)
 }
