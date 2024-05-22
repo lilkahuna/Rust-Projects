@@ -1,7 +1,7 @@
 use clap::{Args, Subcommand, Parser,};
 
 #[derive(Debug, Parser)]
-#[clap(version, about = "File searching made easy")]
+#[clap(version, about = "File searching and extras!")]
 pub struct FsxArgs {
     #[clap(subcommand)]
     pub command: Command
@@ -32,5 +32,8 @@ pub struct ReplaceCommand {
 
 #[derive(Debug, Args)]
 pub struct InfoCommand {
-    pub file: String
+    pub file: String,
+    #[arg(short, long)]
+    /// Display megabytes instead of bytes
+    pub mb: bool
 }

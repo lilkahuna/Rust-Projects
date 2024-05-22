@@ -9,4 +9,4 @@ Move-Item -Path $sourcepath -Destination 'C:\Program Files\fsx'
 $path = $env:Path + 'C:\Program Files\fsx;'
 
 [System.Environment]::SetEnvironmentVariable('Path', $path, 'Machine')
-Write-Output 'Set system wide enviroment variable'
+Write-Output 'fsx installation complete. Restart your terminal.'

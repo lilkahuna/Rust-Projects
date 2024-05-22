@@ -1,5 +1,6 @@
 use std::fmt;
 use std::fs::{self, File};
+use colored::*; 
 
 #[derive(Debug)]
 pub enum ErrorType {
@@ -25,8 +26,9 @@ impl CmdError {
 }
 
 impl fmt::Display for CmdError {
+    // Add some color to our error messages
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:?} -> {}", self.error_type, self.msg)
+        write!(f, "{:?} -> {}", self.error_type, self.msg.red())
     }
 }
 
@@ -64,11 +66,19 @@ pub fn replace_in_file(to_replace: &String, with_replace: &String, file: &String
     Ok(())
 }
 
-pub fn get_file_size(file: &String) -> Result<u64, CmdError> {
+pub fn get_file_size_in_megabytes(file: &String) -> Result<f64, CmdError> {
     let opened_file = File::open(file).map_err(|e| CmdError::new(e.to_string(), ErrorType::FileOpenError))?;
-    let file_size = opened_file.metadata().map_err(|e| CmdError::new(e.to_string(), ErrorType::FileOpenError))?.len();
+    let file_size_in_bytes = opened_file.metadata().map_err(|e| CmdError::new(e.to_string(), ErrorType::FileOpenError))?.len();
+    let file_size_in_megabytes = file_size_in_bytes as f64 / 1048576.0;
+
+    Ok(file_size_in_megabytes.round())
+}
+
+pub fn get_file_size_in_bytes(file: &String) -> Result<u64, CmdError> {
+    let opened_file = File::open(file).map_err(|e| CmdError::new(e.to_string(), ErrorType::FileOpenError))?;
+    let file_size_in_bytes = opened_file.metadata().map_err(|e| CmdError::new(e.to_string(), ErrorType::FileOpenError))?.len();
     
-    Ok(file_size)
+    Ok(file_size_in_bytes)
 }
 
 pub fn get_word_count(file: &String) -> Result<usize, CmdError> {
