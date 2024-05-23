@@ -1,36 +1,5 @@
-use std::fmt;
 use std::fs::{self, File};
-use colored::*; 
-
-#[derive(Debug)]
-pub enum ErrorType {
-    FileReadError,
-    FileWriteError,
-    FileOpenError,
-    FileDataError
-}
-
-#[derive(Debug)]
-pub struct CmdError {
-    pub msg: String,
-    pub error_type: ErrorType
-}
-
-impl CmdError {
-    fn new(msg: String, error: ErrorType) -> Self {
-        Self {
-            msg: msg,
-            error_type: error
-        }
-    }
-}
-
-impl fmt::Display for CmdError {
-    // Add some color to our error messages
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{:?} -> {}", self.error_type, self.msg.red())
-    }
-}
+use crate::error::{CmdError, ErrorType};
 
 pub fn search_file(query: &String, file: &String) -> Result<usize, CmdError> {
     let content = fs::read_to_string(file).map_err(|e| CmdError::new(e.to_string(), ErrorType::FileReadError))?;

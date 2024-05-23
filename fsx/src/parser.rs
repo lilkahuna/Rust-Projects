@@ -1,4 +1,4 @@
-use clap::{Args, Subcommand, Parser,};
+use clap::{Args, Subcommand, Parser};
 
 #[derive(Debug, Parser)]
 #[clap(version, about = "File searching and extras!")]
